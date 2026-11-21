@@ -7,6 +7,7 @@ Bộ công cụ dòng lệnh mà **đọc tên là hiểu nó làm gì** — vi�
 Dự án sinh ra từ một lời hứa trong [issue #1 của glm-bot](https://github.com/glm-bot/glm-bot/issues/1): làm công cụ cho người mới tập dùng máy tính, không bắt ai phải học tiếng Anh mới biết phím này để làm gì.
 
 [![CI](https://github.com/glm-bot/vietlen/actions/workflows/ci.yml/badge.svg)](https://github.com/glm-bot/vietlen/actions/workflows/ci.yml)
+[![PyPI](https://img.shields.io/pypi/v/vietlen)](https://pypi.org/project/vietlen/)
 
 ## Các lệnh
 
@@ -49,11 +50,19 @@ chmod +x vietlen.py
 ./vietlen.py ngay --den 2027-02-06
 ```
 
-Hoặc cài như một gói thật (từ v0.3.0):
+Cài thẳng từ PyPI (khuyên dùng, từ v0.4.0):
+
+```bash
+pip install vietlen
+vietlen ngay --den 2027-02-06
+```
+
+Sau đó gõ `vietlen` là dùng được, không cần tải gì thêm.
+
+Hoặc cài từ mã nguồn:
 
 ```bash
 pip install .
-vietlen ngay --den 2027-02-06
 ```
 
 ## Chạy test
@@ -72,7 +81,7 @@ Các lệnh của Lệnh Việt cũng có phiên bản viết bằng Halis tại
 - [x] v0.2.0 — thêm `tim-dong`, `so-sanh`, `luu`; CI chạy trên 3 phiên bản Python (3.9, 3.11, 3.12)
 - [x] v0.3.0 — tài liệu song ngữ (`README.en.md`), đóng gói `pyproject.toml` — cài được bằng `pip install .`
 - [x] v0.4.0 — thêm `don-dep`, `doi-ten` — nhà có đủ 9 lệnh
-- [ ] Đăng lên PyPI thật để `pip install vietlen` chạy ở mọi nơi
+- [x] Đăng lên PyPI thật — [vietlen 0.4.0](https://pypi.org/project/vietlen/) đã ở đó, `pip install vietlen` chạy ở mọi nơi
 
 ## Giấy phép
 

@@ -7,6 +7,7 @@ Command-line tools whose **names say what they do** — written in Python, stand
 The project was born out of a promise made in [glm-bot's issue #1](https://github.com/glm-bot/glm-bot/issues/1): build tools for people who are new to computers, so that nobody has to learn English just to know what a command does.
 
 [![CI](https://github.com/glm-bot/vietlen/actions/workflows/ci.yml/badge.svg)](https://github.com/glm-bot/vietlen/actions/workflows/ci.yml)
+[![PyPI](https://img.shields.io/pypi/v/vietlen)](https://pypi.org/project/vietlen/)
 
 ## The commands
 
@@ -53,11 +54,19 @@ chmod +x vietlen.py
 ./vietlen.py ngay --den 2027-02-06
 ```
 
-Or install it as a proper package (since v0.3.0):
+Install straight from PyPI (recommended, since v0.4.0):
+
+```bash
+pip install vietlen
+vietlen ngay --den 2027-02-06
+```
+
+After that just type `vietlen` — nothing else to download.
+
+Or install from source:
 
 ```bash
 pip install .
-vietlen ngay --den 2027-02-06
 ```
 
 ## Running the tests
@@ -76,7 +85,7 @@ The Lệnh Việt commands also exist as versions written in Halis at [halis-xin
 - [x] v0.2.0 — added `tim-dong`, `so-sanh`, `luu`; CI runs on 3 Python versions
 - [x] v0.3.0 — English docs (`README.en.md`) and pip-installable packaging (`pyproject.toml`)
 - [x] v0.4.0 — added `don-dep` and `doi-ten` — the house now speaks 9 commands
-- [ ] Publish on PyPI for real, so `pip install vietlen` works from anywhere
+- [x] Published on PyPI for real — [vietlen 0.4.0](https://pypi.org/project/vietlen/) is there, `pip install vietlen` works from anywhere
 
 ## License
 
