@@ -6,6 +6,7 @@ Chỉ dùng thư viện chuẩn của Python (3.9+). Gồm các lệnh:
     tim          tìm file/thư mục theo tên
     kich-thuoc   xem dung lượng thư mục theo loại file
     ngay         hôm nay là thứ mấy, còn bao nhiêu ngày đến mốc
+    dem-ngay     đếm số ngày giữa hai mốc (mặc định mốc sau là hôm nay)
     tim-dong     in các dòng chứa từ khóa, kèm số dòng
     so-sanh      so sánh hai file theo nội dung (SHA-256)
     luu          sao lưu file, tên kèm dấu thời gian
@@ -17,6 +18,7 @@ Ví dụ:
     python vietlen.py tim bao-cao --trong ~/Documents
     python vietlen.py kich-thuoc ~/Downloads
     python vietlen.py ngay --den 2027-02-06
+    python vietlen.py dem-ngay 2026-01-01 --den 2026-12-31
     python vietlen.py tim-dong quan-trong ghi-chu.txt
     python vietlen.py so-sanh ban-goc.txt ban-sua.txt
     python vietlen.py luu ghi-chu.txt --vao ~/sao-luu
@@ -135,6 +137,27 @@ def cmd_ngay(args) -> None:
         print("Ngày đó chính là hôm nay!")
     else:
         print(f"Ngày {moc.strftime('%d/%m/%Y')} đã qua {abs(con_lai)} ngày")
+
+
+def doc_ngay(s: str, ten: str) -> datetime.date:
+    """Đọc ngày dạng ISO, sai thì báo lỗi tiếng Việt dễ hiểu."""
+    try:
+        return datetime.date.fromisoformat(s)
+    except ValueError:
+        raise SystemExit(f"dem-ngay: ngày '{s}' của {ten} không hợp lệ (dạng chuẩn: 2026-01-01)")
+
+
+def cmd_dem_ngay(args) -> None:
+    """Đếm số ngày giữa hai mốc — mốc sau không có thì lấy hôm nay."""
+    tu_ngay = doc_ngay(args.tu_ngay, "mốc đầu")
+    den_ngay = doc_ngay(args.den, "mốc sau") if args.den else datetime.date.today()
+    so_ngay = abs((den_ngay - tu_ngay).days)
+    if so_ngay == 0:
+        print(f"Hai mốc trùng một ngày: {tu_ngay.strftime('%d/%m/%Y')}")
+        return
+    tuan, le = divmod(so_ngay, 7)
+    chi_tiet = f" ({tuan} tuần {le} ngày)" if tuan else f" ({le} ngày)"
+    print(f"Giữa {tu_ngay.strftime('%d/%m/%Y')} và {den_ngay.strftime('%d/%m/%Y')}: {so_ngay} ngày{chi_tiet}")
 
 
 def cmd_tim_dong(args) -> None:
@@ -274,6 +297,11 @@ def main(argv=None) -> int:
     n = sub.add_parser("ngay", help="hôm nay thứ mấy, còn bao nhiêu ngày đến mốc")
     n.add_argument("--den", help="ngày cần đếm ngược tới (dạng 2027-02-06)")
     n.set_defaults(func=cmd_ngay)
+
+    dn = sub.add_parser("dem-ngay", help="đếm số ngày giữa hai mốc")
+    dn.add_argument("tu_ngay", help="mốc đầu (dạng 2026-01-01)")
+    dn.add_argument("--den", help="mốc sau (mặc định: hôm nay)")
+    dn.set_defaults(func=cmd_dem_ngay)
 
     t2 = sub.add_parser("tim-dong", help="in các dòng chứa từ khóa, kèm số dòng")
     t2.add_argument("tu_khoa", help="từ khóa cần tìm (không phân biệt hoa thường)")

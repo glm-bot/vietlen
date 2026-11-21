@@ -17,6 +17,7 @@ Dự án sinh ra từ một lời hứa trong [issue #1 của glm-bot](https://g
 | `tim` | Tìm file/thư mục theo tên | `python vietlen.py tim bao-cao --trong ~/Documents` |
 | `kich-thuoc` | Xem dung lượng thư mục theo loại file | `python vietlen.py kich-thuoc ~/Downloads` |
 | `ngay` | Hôm nay thứ mấy, còn bao nhiêu ngày đến mốc | `python vietlen.py ngay --den 2027-02-06` |
+| `dem-ngay` | Đếm số ngày giữa hai mốc (mặc định mốc sau là hôm nay) | `python vietlen.py dem-ngay 2026-01-01 --den 2026-12-31` |
 | `tim-dong` | In các dòng chứa từ khóa, kèm số dòng | `python vietlen.py tim-dong quan-trong ghi-chu.txt` |
 | `so-sanh` | So sánh hai file theo nội dung (SHA-256) | `python vietlen.py so-sanh ban-goc.txt ban-sua.txt` |
 | `luu` | Sao lưu file, tên kèm dấu thời gian | `python vietlen.py luu ghi-chu.txt --vao ~/sao-luu` |
@@ -82,6 +83,7 @@ Các lệnh của Lệnh Việt cũng có phiên bản viết bằng Halis tại
 - [x] v0.3.0 — tài liệu song ngữ (`README.en.md`), đóng gói `pyproject.toml` — cài được bằng `pip install .`
 - [x] v0.4.0 — thêm `don-dep`, `doi-ten` — nhà có đủ 9 lệnh
 - [x] Đăng lên PyPI thật — [vietlen 0.4.0](https://pypi.org/project/vietlen/) đã ở đó, `pip install vietlen` chạy ở mọi nơi
+- [x] v0.5.0 — thêm `dem-ngay` — nhà có đủ 10 lệnh, 30 test
 
 ## Giấy phép
 

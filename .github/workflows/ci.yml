@@ -26,6 +26,7 @@ jobs:
       - name: Smoke test từng lệnh
         run: |
           python vietlen.py ngay
+          python vietlen.py dem-ngay 2026-01-01 --den 2026-02-01
           echo "mo ta thu nghiem" > /tmp/ghi-chu.txt
           python vietlen.py dem /tmp/ghi-chu.txt
           python vietlen.py tim-dong thu /tmp/ghi-chu.txt

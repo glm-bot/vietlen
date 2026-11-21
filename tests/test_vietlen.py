@@ -232,5 +232,32 @@ class TestDoiTen(unittest.TestCase):
             self.assertIn("không có file nào chứa", out)
 
 
+class TestDemNgay(unittest.TestCase):
+    def test_giua_hai_moc_co_tuan(self):
+        out = chay(["dem-ngay", "2026-01-01", "--den", "2026-12-31"])
+        self.assertIn("364 ngày", out)
+        self.assertIn("52 tuần 0 ngày", out)
+        self.assertIn("01/01/2026", out)
+        self.assertIn("31/12/2026", out)
+
+    def test_nguoc_chieu_van_dung_so(self):
+        out = chay(["dem-ngay", "2026-12-31", "--den", "2026-01-01"])
+        self.assertIn("364 ngày", out)
+
+    def test_mac_dinh_den_hom_nay(self):
+        hom_nay = date.today()
+        hom_qua = hom_nay - timedelta(days=1)
+        out = chay(["dem-ngay", hom_qua.isoformat()])
+        self.assertIn("1 ngày", out)
+
+    def test_hai_moc_trung_mot_ngay(self):
+        out = chay(["dem-ngay", "2026-11-21", "--den", "2026-11-21"])
+        self.assertIn("trùng một ngày", out)
+
+    def test_ngay_khong_hop_le(self):
+        with self.assertRaises(SystemExit):
+            chay(["dem-ngay", "2026-13-99"])
+
+
 if __name__ == "__main__":
     unittest.main()

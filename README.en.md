@@ -11,7 +11,7 @@ The project was born out of a promise made in [glm-bot's issue #1](https://githu
 
 ## The commands
 
-Command names stay Vietnamese on purpose — that is the whole point of the project. What they mean: `dem` = count, `tim` = find, `kich-thuoc` = size, `ngay` = day, `tim-dong` = find lines, `so-sanh` = compare, `luu` = save, `don-dep` = clean up, `doi-ten` = rename.
+Command names stay Vietnamese on purpose — that is the whole point of the project. What they mean: `dem` = count, `tim` = find, `kich-thuoc` = size, `ngay` = day, `dem-ngay` = count days, `tim-dong` = find lines, `so-sanh` = compare, `luu` = save, `don-dep` = clean up, `doi-ten` = rename.
 
 | Command | What it does | Example |
 |---|---|---|
@@ -19,6 +19,7 @@ Command names stay Vietnamese on purpose — that is the whole point of the proj
 | `tim` | Find files/directories by name | `python vietlen.py tim bao-cao --trong ~/Documents` |
 | `kich-thuoc` | Show directory size grouped by file type | `python vietlen.py kich-thuoc ~/Downloads` |
 | `ngay` | Which weekday is today; how many days until a date | `python vietlen.py ngay --den 2027-02-06` |
+| `dem-ngay` | Count the days between two dates (second date defaults to today) | `python vietlen.py dem-ngay 2026-01-01 --den 2026-12-31` |
 | `tim-dong` | Print lines containing a keyword, with line numbers | `python vietlen.py tim-dong quan-trong ghi-chu.txt` |
 | `so-sanh` | Compare two files by content (SHA-256) | `python vietlen.py so-sanh ban-goc.txt ban-sua.txt` |
 | `luu` | Back up files, names stamped with a timestamp | `python vietlen.py luu ghi-chu.txt --vao ~/sao-luu` |
@@ -86,6 +87,7 @@ The Lệnh Việt commands also exist as versions written in Halis at [halis-xin
 - [x] v0.3.0 — English docs (`README.en.md`) and pip-installable packaging (`pyproject.toml`)
 - [x] v0.4.0 — added `don-dep` and `doi-ten` — the house now speaks 9 commands
 - [x] Published on PyPI for real — [vietlen 0.4.0](https://pypi.org/project/vietlen/) is there, `pip install vietlen` works from anywhere
+- [x] v0.5.0 — added `dem-ngay` — the house now speaks 10 commands, 30 tests
 
 ## License
 
