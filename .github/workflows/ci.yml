@@ -8,12 +8,15 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.9", "3.11", "3.12"]
     steps:
       - uses: actions/checkout@v4
 
       - uses: actions/setup-python@v5
         with:
-          python-version: "3.12"
+          python-version: ${{ matrix.python-version }}
 
       - name: Chạy bộ test
         run: python -m unittest discover -s tests -v
@@ -23,6 +26,10 @@ jobs:
           python vietlen.py ngay
           echo "mo ta thu nghiem" > /tmp/ghi-chu.txt
           python vietlen.py dem /tmp/ghi-chu.txt
+          python vietlen.py tim-dong thu /tmp/ghi-chu.txt
+          cp /tmp/ghi-chu.txt /tmp/ghi-chu-2.txt
+          python vietlen.py so-sanh /tmp/ghi-chu.txt /tmp/ghi-chu-2.txt
+          python vietlen.py luu /tmp/ghi-chu.txt --vao /tmp/sao-luu
           mkdir -p /tmp/kho
           touch /tmp/kho/hinh.jpg
           echo "abc" > /tmp/kho/van-ban.txt
