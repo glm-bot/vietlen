@@ -158,5 +158,79 @@ class TestLuu(unittest.TestCase):
             self.assertIn(".txt", ban_sao[0].name)
 
 
+class TestDonDep(unittest.TestCase):
+    def test_tim_rac_chua_xoa(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            (Path(tmp) / "__pycache__").mkdir()
+            (Path(tmp) / "__pycache__" / "mod.pyc").write_bytes(b"x")
+            (Path(tmp) / ".DS_Store").write_bytes(b"y")
+            (Path(tmp) / "giu-lai.txt").write_text("giu", encoding="utf-8")
+            out = chay(["don-dep", tmp])
+            self.assertIn("3 mục rác", out)
+            self.assertIn("--xoa", out)
+            self.assertTrue((Path(tmp) / "__pycache__").exists())
+
+    def test_xoa_that(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            (Path(tmp) / "__pycache__").mkdir()
+            (Path(tmp) / "__pycache__" / "mod.pyc").write_bytes(b"x")
+            (Path(tmp) / ".DS_Store").write_bytes(b"y")
+            (Path(tmp) / "giu-lai.txt").write_text("giu", encoding="utf-8")
+            out = chay(["don-dep", tmp, "--xoa"])
+            self.assertIn("đã dọn", out)
+            self.assertFalse((Path(tmp) / "__pycache__").exists())
+            self.assertFalse((Path(tmp) / ".DS_Store").exists())
+            self.assertTrue((Path(tmp) / "giu-lai.txt").exists())
+
+    def test_thu_muc_sach(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            out = chay(["don-dep", tmp])
+            self.assertIn("sạch bong", out)
+
+    def test_file_tam_duoi_khac(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            (Path(tmp) / "draf.tmp").write_bytes(b"x")
+            (Path(tmp) / "sao.backup~").write_bytes(b"y")
+            (Path(tmp) / "quan-trong.txt").write_text("giu", encoding="utf-8")
+            out = chay(["don-dep", tmp])
+            self.assertIn("2 mục rác", out)
+
+
+class TestDoiTen(unittest.TestCase):
+    def test_xem_truoc_mac_dinh(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            (Path(tmp) / "anh-IMG-1.jpg").write_bytes(b"x")
+            (Path(tmp) / "anh-IMG-2.jpg").write_bytes(b"y")
+            out = chay(["doi-ten", tmp, "--cu", "IMG", "--moi", "ca"])
+            self.assertIn("anh-IMG-1.jpg -> anh-ca-1.jpg", out)
+            self.assertIn("--thuc-su", out)
+            self.assertTrue((Path(tmp) / "anh-IMG-1.jpg").exists())
+
+    def test_doi_that(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            (Path(tmp) / "anh-IMG-1.jpg").write_bytes(b"x")
+            (Path(tmp) / "anh-IMG-2.jpg").write_bytes(b"y")
+            out = chay(["doi-ten", tmp, "--cu", "IMG", "--moi", "ca", "--thuc-su"])
+            self.assertIn("đã đổi tên 2 file", out)
+            self.assertTrue((Path(tmp) / "anh-ca-1.jpg").exists())
+            self.assertFalse((Path(tmp) / "anh-IMG-1.jpg").exists())
+
+    def test_ne_trung_ten_da_co(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            (Path(tmp) / "a.txt").write_text("cu", encoding="utf-8")
+            (Path(tmp) / "b.txt").write_text("moi", encoding="utf-8")
+            out = chay(["doi-ten", tmp, "--cu", "b", "--moi", "a", "--thuc-su"])
+            self.assertIn("né sang", out)
+            self.assertTrue((Path(tmp) / "a.txt").exists())
+            self.assertEqual((Path(tmp) / "a.txt").read_text(encoding="utf-8"), "cu")
+            self.assertTrue((Path(tmp) / "a_1.txt").exists())
+
+    def test_khong_co_file_khop(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            (Path(tmp) / "x.txt").write_text("x", encoding="utf-8")
+            out = chay(["doi-ten", tmp, "--cu", "zzz", "--moi", "y"])
+            self.assertIn("không có file nào chứa", out)
+
+
 if __name__ == "__main__":
     unittest.main()

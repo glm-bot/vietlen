@@ -19,6 +19,8 @@ Dự án sinh ra từ một lời hứa trong [issue #1 của glm-bot](https://g
 | `tim-dong` | In các dòng chứa từ khóa, kèm số dòng | `python vietlen.py tim-dong quan-trong ghi-chu.txt` |
 | `so-sanh` | So sánh hai file theo nội dung (SHA-256) | `python vietlen.py so-sanh ban-goc.txt ban-sua.txt` |
 | `luu` | Sao lưu file, tên kèm dấu thời gian | `python vietlen.py luu ghi-chu.txt --vao ~/sao-luu` |
+| `don-dep` | Tìm rác trong thư mục (`__pycache__`, `.DS_Store`, `*.pyc`...), `--xoa` để dọn thật | `python vietlen.py don-dep ~/Projects --xoa` |
+| `doi-ten` | Đổi tên hàng loạt theo cặp `--cu`/`--moi`, mặc định chỉ xem trước | `python vietlen.py doi-ten ~/Pictures --cu IMG --moi anh --thuc-su` |
 
 Ví dụ kết quả:
 
@@ -69,7 +71,7 @@ Các lệnh của Lệnh Việt cũng có phiên bản viết bằng Halis tại
 - [x] v0.1.0 — 4 lệnh đầu tiên: `dem`, `tim`, `kich-thuoc`, `ngay`
 - [x] v0.2.0 — thêm `tim-dong`, `so-sanh`, `luu`; CI chạy trên 3 phiên bản Python (3.9, 3.11, 3.12)
 - [x] v0.3.0 — tài liệu song ngữ (`README.en.md`), đóng gói `pyproject.toml` — cài được bằng `pip install .`
-- [ ] Thêm lệnh `don-dep`, `doi-ten`
+- [x] v0.4.0 — thêm `don-dep`, `doi-ten` — nhà có đủ 9 lệnh
 - [ ] Đăng lên PyPI thật để `pip install vietlen` chạy ở mọi nơi
 
 ## Giấy phép

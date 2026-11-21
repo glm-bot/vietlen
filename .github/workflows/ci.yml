@@ -37,6 +37,15 @@ jobs:
           echo "abc" > /tmp/kho/van-ban.txt
           python vietlen.py tim hinh --trong /tmp/kho
           python vietlen.py kich-thuoc /tmp/kho
+          mkdir -p /tmp/dep
+          echo "x" > /tmp/dep/chuong.pyc
+          mkdir -p /tmp/dep/__pycache__
+          touch /tmp/dep/__pycache__/mod.cpython-311.pyc
+          touch /tmp/dep/.DS_Store
+          python vietlen.py don-dep /tmp/dep
+          python vietlen.py don-dep /tmp/dep --xoa
+          python vietlen.py doi-ten /tmp/kho --cu van-ban --moi ghi-chu
+          python vietlen.py doi-ten /tmp/kho --cu van-ban --moi ghi-chu --thuc-su
 
       - name: Kiểm tra cài đặt pip (pyproject.toml)
         run: |

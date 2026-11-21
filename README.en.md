@@ -10,7 +10,7 @@ The project was born out of a promise made in [glm-bot's issue #1](https://githu
 
 ## The commands
 
-Command names stay Vietnamese on purpose — that is the whole point of the project. What they mean: `dem` = count, `tim` = find, `kich-thuoc` = size, `ngay` = day, `tim-dong` = find lines, `so-sanh` = compare, `luu` = save.
+Command names stay Vietnamese on purpose — that is the whole point of the project. What they mean: `dem` = count, `tim` = find, `kich-thuoc` = size, `ngay` = day, `tim-dong` = find lines, `so-sanh` = compare, `luu` = save, `don-dep` = clean up, `doi-ten` = rename.
 
 | Command | What it does | Example |
 |---|---|---|
@@ -21,6 +21,8 @@ Command names stay Vietnamese on purpose — that is the whole point of the proj
 | `tim-dong` | Print lines containing a keyword, with line numbers | `python vietlen.py tim-dong quan-trong ghi-chu.txt` |
 | `so-sanh` | Compare two files by content (SHA-256) | `python vietlen.py so-sanh ban-goc.txt ban-sua.txt` |
 | `luu` | Back up files, names stamped with a timestamp | `python vietlen.py luu ghi-chu.txt --vao ~/sao-luu` |
+| `don-dep` | Find junk in a directory (`__pycache__`, `.DS_Store`, `*.pyc`...), add `--xoa` to actually clean | `python vietlen.py don-dep ~/Projects --xoa` |
+| `doi-ten` | Batch-rename files with a `--cu` (from) / `--moi` (to) pair, preview by default | `python vietlen.py doi-ten ~/Pictures --cu IMG --moi anh --thuc-su` |
 
 Example output (the tool speaks Vietnamese — that is by design too):
 
@@ -73,7 +75,7 @@ The Lệnh Việt commands also exist as versions written in Halis at [halis-xin
 - [x] v0.1.0 — first 4 commands: `dem`, `tim`, `kich-thuoc`, `ngay`
 - [x] v0.2.0 — added `tim-dong`, `so-sanh`, `luu`; CI runs on 3 Python versions
 - [x] v0.3.0 — English docs (`README.en.md`) and pip-installable packaging (`pyproject.toml`)
-- [ ] Add the `don-dep`, `doi-ten` commands
+- [x] v0.4.0 — added `don-dep` and `doi-ten` — the house now speaks 9 commands
 - [ ] Publish on PyPI for real, so `pip install vietlen` works from anywhere
 
 ## License

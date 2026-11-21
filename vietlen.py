@@ -9,6 +9,8 @@ Chỉ dùng thư viện chuẩn của Python (3.9+). Gồm các lệnh:
     tim-dong     in các dòng chứa từ khóa, kèm số dòng
     so-sanh      so sánh hai file theo nội dung (SHA-256)
     luu          sao lưu file, tên kèm dấu thời gian
+    don-dep      tìm rác trong thư mục (__pycache__, .DS_Store, *.pyc...), --xoa để dọn thật
+    doi-ten      đổi tên hàng loạt theo cặp --cu/--moi, mặc định chỉ xem trước
 
 Ví dụ:
     python vietlen.py dem ghi-chu.txt
@@ -18,6 +20,8 @@ Ví dụ:
     python vietlen.py tim-dong quan-trong ghi-chu.txt
     python vietlen.py so-sanh ban-goc.txt ban-sua.txt
     python vietlen.py luu ghi-chu.txt --vao ~/sao-luu
+    python vietlen.py don-dep ~/Projects --xoa
+    python vietlen.py doi-ten ~/Pictures --cu IMG --moi anh --thuc-su
 """
 import argparse
 import datetime
@@ -27,6 +31,19 @@ import sys
 from pathlib import Path
 
 THU = ["Thứ Hai", "Thứ Ba", "Thứ Tư", "Thứ Năm", "Thứ Sáu", "Thứ Bảy", "Chủ Nhật"]
+
+THU_MUC_RAC = {"__pycache__", ".pytest_cache", ".mypy_cache", ".ruff_cache"}
+TEN_RAC = {".DS_Store", "Thumbs.db", "desktop.ini"}
+DUOI_RAC = {".pyc", ".pyo", ".tmp", ".swp"}
+
+
+def la_rac(p: Path) -> bool:
+    """Nhận diện mục rác: thư mục cache, file hệ điều hành bỏ đi, file tạm."""
+    if p.is_dir():
+        return p.name in THU_MUC_RAC
+    if p.name in TEN_RAC or p.name.endswith("~"):
+        return True
+    return p.suffix in DUOI_RAC
 
 
 def doc_dung_luong(n: int) -> str:
@@ -168,6 +185,71 @@ def cmd_luu(args) -> None:
     print(f"\n({da_luu} file đã được sao lưu lúc {thoi_gian})")
 
 
+def cmd_don_dep(args) -> None:
+    """Tìm rác trong thư mục. Với --xoa thì dọn thật, không thì chỉ liệt kê."""
+    root = Path(args.thu_muc).expanduser().resolve()
+    if not root.is_dir():
+        raise SystemExit(f"don-dep: không tìm thấy thư mục '{args.thu_muc}'")
+    rac = [p for p in sorted(root.rglob("*")) if la_rac(p)]
+    if not rac:
+        print(f"{root}: sạch bong, không có rác nào")
+        return
+    for p in rac:
+        print(f"  {p}{'/' if p.is_dir() else ''}")
+    dung_luong = sum(p.stat().st_size for p in rac if p.is_file())
+    print(f"\ntìm thấy {len(rac)} mục rác, {doc_dung_luong(dung_luong)}")
+    if not args.xoa:
+        print("chạy lại với --xoa để dọn thật")
+        return
+    da_xoa = 0
+    for p in rac:
+        if not p.exists():
+            continue  # đã bị dọn theo thư mục cha
+        try:
+            if p.is_dir():
+                shutil.rmtree(p)
+            else:
+                p.unlink()
+            da_xoa += 1
+        except OSError as loi:
+            print(f"don-dep: không xóa được {p} ({loi})", file=sys.stderr)
+    print(f"đã dọn {da_xoa} mục — thư mục giờ sạch hơn")
+
+
+def cmd_doi_ten(args) -> None:
+    """Đổi tên hàng loạt: thay --cu bằng --moi trong tên file. Mặc định chỉ xem trước."""
+    root = Path(args.thu_muc).expanduser().resolve()
+    if not root.is_dir():
+        raise SystemExit(f"doi-ten: không tìm thấy thư mục '{args.thu_muc}'")
+    cap_doi = []
+    for p in sorted(root.iterdir()):
+        if not p.is_file() or args.cu not in p.name:
+            continue
+        ten_moi = p.name.replace(args.cu, args.moi)
+        if ten_moi != p.name:
+            cap_doi.append((p, root / ten_moi))
+    if not cap_doi:
+        print(f"{root}: không có file nào chứa '{args.cu}' trong tên")
+        return
+    for cu, moi in cap_doi:
+        print(f"  {cu.name} -> {moi.name}")
+    print(f"\n{len(cap_doi)} file sẽ được đổi tên")
+    if not args.thuc_su:
+        print("chạy lại với --thuc-su để đổi thật")
+        return
+    da_doi = 0
+    for cu, moi in cap_doi:
+        if moi.exists():
+            i = 1
+            while moi.with_name(f"{moi.stem}_{i}{moi.suffix}").exists():
+                i += 1
+            moi = moi.with_name(f"{moi.stem}_{i}{moi.suffix}")
+            print(f"  (tên đã có, né sang {moi.name})")
+        cu.rename(moi)
+        da_doi += 1
+    print(f"đã đổi tên {da_doi} file")
+
+
 def main(argv=None) -> int:
     p = argparse.ArgumentParser(
         prog="vietlen",
@@ -207,6 +289,18 @@ def main(argv=None) -> int:
     l.add_argument("file", nargs="+", help="file cần sao lưu")
     l.add_argument("--vao", help="thư mục đích (mặc định: ban-sao-luu/)")
     l.set_defaults(func=cmd_luu)
+
+    d2 = sub.add_parser("don-dep", help="tìm rác trong thư mục, --xoa để dọn thật")
+    d2.add_argument("thu_muc", help="thư mục cần dọn")
+    d2.add_argument("--xoa", action="store_true", help="xóa thật (mặc định chỉ liệt kê)")
+    d2.set_defaults(func=cmd_don_dep)
+
+    n2 = sub.add_parser("doi-ten", help="đổi tên hàng loạt theo cặp --cu/--moi")
+    n2.add_argument("thu_muc", help="thư mục chứa file cần đổi tên")
+    n2.add_argument("--cu", required=True, help="đoạn tên cần thay trong tên file")
+    n2.add_argument("--moi", default="", help="đoạn tên thay vào (mặc định: xóa hẳn)")
+    n2.add_argument("--thuc-su", action="store_true", help="đổi thật (mặc định chỉ xem trước)")
+    n2.set_defaults(func=cmd_doi_ten)
 
     args = p.parse_args(argv)
     args.func(args)
