@@ -32,7 +32,7 @@ KHÁC NHAU:
 
 ## Cách dùng
 
-Cần Python 3.9 trở lên. Không cần cài thêm gì:
+Cần Python 3.9 trở lên (code chỉ dùng thư viện chuẩn, không có cú pháp mới). CI kiểm tra trên 3.11, 3.12, 3.13. Không cần cài thêm gì:
 
 ```bash
 python vietlen.py <lệnh> <tham số>
