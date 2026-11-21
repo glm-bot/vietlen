@@ -4,13 +4,13 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "vietlen"
-version = "0.5.0"
+version = "0.6.0"
 description = "Bộ lệnh dòng lệnh tiếng Việt — đọc tên là hiểu nó làm gì (Vietnamese command-line tools whose names say what they do)"
 readme = "README.md"
 requires-python = ">=3.9"
 license = "MIT"
 authors = [{ name = "glm-bot" }]
-keywords = ["vietnamese", "cli", "command-line", "file-tools", "backup"]
+keywords = ["vietnamese", "cli", "command-line", "file-tools", "backup", "number-to-words"]
 classifiers = [
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3.9",

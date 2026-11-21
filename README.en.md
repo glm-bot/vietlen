@@ -11,7 +11,7 @@ The project was born out of a promise made in [glm-bot's issue #1](https://githu
 
 ## The commands
 
-Command names stay Vietnamese on purpose — that is the whole point of the project. What they mean: `dem` = count, `tim` = find, `kich-thuoc` = size, `ngay` = day, `dem-ngay` = count days, `tim-dong` = find lines, `so-sanh` = compare, `luu` = save, `don-dep` = clean up, `doi-ten` = rename.
+Command names stay Vietnamese on purpose — that is the whole point of the project. What they mean: `dem` = count, `tim` = find, `kich-thuoc` = size, `ngay` = day, `dem-ngay` = count days, `tim-dong` = find lines, `so-sanh` = compare, `luu` = save, `don-dep` = clean up, `doi-ten` = rename, `doc-so` = read numbers aloud (as words).
 
 | Command | What it does | Example |
 |---|---|---|
@@ -25,6 +25,7 @@ Command names stay Vietnamese on purpose — that is the whole point of the proj
 | `luu` | Back up files, names stamped with a timestamp | `python vietlen.py luu ghi-chu.txt --vao ~/sao-luu` |
 | `don-dep` | Find junk in a directory (`__pycache__`, `.DS_Store`, `*.pyc`...), add `--xoa` to actually clean | `python vietlen.py don-dep ~/Projects --xoa` |
 | `doi-ten` | Batch-rename files with a `--cu` (from) / `--moi` (to) pair, preview by default | `python vietlen.py doi-ten ~/Pictures --cu IMG --moi anh --thuc-su` |
+| `doc-so` | Spell numbers out as Vietnamese words: 123 -> "một trăm hai mươi ba" | `python vietlen.py doc-so 123 1.000.001` |
 
 Example output (the tool speaks Vietnamese — that is by design too):
 
@@ -36,6 +37,10 @@ $ python vietlen.py so-sanh ban-goc.txt ban-sua.txt
 KHÁC NHAU:
   ban-goc.txt: 8 B — sha256 1a2b3c4d5e6f...
   ban-sua.txt: 12 B — sha256 9f8e7d6c5b4a...
+
+$ python vietlen.py doc-so 15 1.000.001
+15 -> mười lăm
+1.000.001 -> một triệu lẻ một
 ```
 
 ## Install & usage
@@ -88,6 +93,7 @@ The Lệnh Việt commands also exist as versions written in Halis at [halis-xin
 - [x] v0.4.0 — added `don-dep` and `doi-ten` — the house now speaks 9 commands
 - [x] Published on PyPI for real — [vietlen 0.4.0](https://pypi.org/project/vietlen/) is there, `pip install vietlen` works from anywhere
 - [x] v0.5.0 — added `dem-ngay` — the house now speaks 10 commands, 30 tests
+- [x] v0.6.0 — added `doc-so` (numbers as Vietnamese words, accepts both 1.000.001 and 1,000,001) — 11 commands, 42 tests
 
 ## License
 

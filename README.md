@@ -23,6 +23,7 @@ Dự án sinh ra từ một lời hứa trong [issue #1 của glm-bot](https://g
 | `luu` | Sao lưu file, tên kèm dấu thời gian | `python vietlen.py luu ghi-chu.txt --vao ~/sao-luu` |
 | `don-dep` | Tìm rác trong thư mục (`__pycache__`, `.DS_Store`, `*.pyc`...), `--xoa` để dọn thật | `python vietlen.py don-dep ~/Projects --xoa` |
 | `doi-ten` | Đổi tên hàng loạt theo cặp `--cu`/`--moi`, mặc định chỉ xem trước | `python vietlen.py doi-ten ~/Pictures --cu IMG --moi anh --thuc-su` |
+| `doc-so` | Đọc số thành chữ: 123 -> "một trăm hai mươi ba" | `python vietlen.py doc-so 123 1.000.001` |
 
 Ví dụ kết quả:
 
@@ -34,6 +35,10 @@ $ python vietlen.py so-sanh ban-goc.txt ban-sua.txt
 KHÁC NHAU:
   ban-goc.txt: 8 B — sha256 1a2b3c4d5e6f...
   ban-sua.txt: 12 B — sha256 9f8e7d6c5b4a...
+
+$ python vietlen.py doc-so 15 1.000.001
+15 -> mười lăm
+1.000.001 -> một triệu lẻ một
 ```
 
 ## Cách dùng
@@ -84,6 +89,7 @@ Các lệnh của Lệnh Việt cũng có phiên bản viết bằng Halis tại
 - [x] v0.4.0 — thêm `don-dep`, `doi-ten` — nhà có đủ 9 lệnh
 - [x] Đăng lên PyPI thật — [vietlen 0.4.0](https://pypi.org/project/vietlen/) đã ở đó, `pip install vietlen` chạy ở mọi nơi
 - [x] v0.5.0 — thêm `dem-ngay` — nhà có đủ 10 lệnh, 30 test
+- [x] v0.6.0 — thêm `doc-so` (đọc số thành chữ, hiểu cả 1.000.001 lẫn 1,000,001) — nhà có đủ 11 lệnh, 42 test
 
 ## Giấy phép
 

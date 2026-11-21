@@ -261,3 +261,78 @@ class TestDemNgay(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class TestDocSo(unittest.TestCase):
+    def test_doc_so_don_gian(self):
+        self.assertEqual(vietlen.doc_so_thanh_chu(0), "không")
+        self.assertEqual(vietlen.doc_so_thanh_chu(5), "năm")
+        self.assertEqual(vietlen.doc_so_thanh_chu(10), "mười")
+        self.assertEqual(vietlen.doc_so_thanh_chu(11), "mười một")
+        self.assertEqual(vietlen.doc_so_thanh_chu(14), "mười tư")
+        self.assertEqual(vietlen.doc_so_thanh_chu(15), "mười lăm")
+        self.assertEqual(vietlen.doc_so_thanh_chu(16), "mười sáu")
+
+    def test_doc_so_hang_chuc(self):
+        self.assertEqual(vietlen.doc_so_thanh_chu(20), "hai mươi")
+        self.assertEqual(vietlen.doc_so_thanh_chu(21), "hai mươi mốt")
+        self.assertEqual(vietlen.doc_so_thanh_chu(24), "hai mươi tư")
+        self.assertEqual(vietlen.doc_so_thanh_chu(25), "hai mươi lăm")
+        self.assertEqual(vietlen.doc_so_thanh_chu(45), "bốn mươi lăm")
+
+    def test_doc_so_hang_tram(self):
+        self.assertEqual(vietlen.doc_so_thanh_chu(100), "một trăm")
+        self.assertEqual(vietlen.doc_so_thanh_chu(101), "một trăm lẻ một")
+        self.assertEqual(vietlen.doc_so_thanh_chu(105), "một trăm lẻ năm")
+        self.assertEqual(vietlen.doc_so_thanh_chu(110), "một trăm mười")
+        self.assertEqual(vietlen.doc_so_thanh_chu(115), "một trăm mười lăm")
+        self.assertEqual(vietlen.doc_so_thanh_chu(391), "ba trăm chín mươi mốt")
+
+    def test_doc_so_nghin_trieu(self):
+        self.assertEqual(vietlen.doc_so_thanh_chu(1000), "một nghìn")
+        self.assertEqual(vietlen.doc_so_thanh_chu(2010), "hai nghìn không trăm mười")
+        self.assertEqual(vietlen.doc_so_thanh_chu(52001), "năm mươi hai nghìn lẻ một")
+        self.assertEqual(vietlen.doc_so_thanh_chu(101000), "một trăm lẻ một nghìn")
+        self.assertEqual(vietlen.doc_so_thanh_chu(100000), "một trăm nghìn")
+        self.assertEqual(vietlen.doc_so_thanh_chu(1000000), "một triệu")
+        self.assertEqual(vietlen.doc_so_thanh_chu(1000001), "một triệu lẻ một")
+        self.assertEqual(
+            vietlen.doc_so_thanh_chu(1010101),
+            "một triệu không trăm mười nghìn một trăm lẻ một",
+        )
+
+    def test_doc_so_lon(self):
+        self.assertEqual(vietlen.doc_so_thanh_chu(10**9), "một tỷ")
+        self.assertEqual(vietlen.doc_so_thanh_chu(10**12), "một nghìn tỷ")
+        self.assertEqual(
+            vietlen.doc_so_thanh_chu(123456789),
+            "một trăm hai mươi ba triệu bốn trăm năm mươi sáu nghìn bảy trăm tám mươi chín",
+        )
+
+    def test_doc_so_am(self):
+        self.assertEqual(vietlen.doc_so_thanh_chu(-45), "trừ bốn mươi lăm")
+
+    def test_doc_so_qua_lon_bao_loi(self):
+        with self.assertRaises(ValueError):
+            vietlen.doc_so_thanh_chu(10**18)
+
+    def test_lenh_doc_so(self):
+        out = chay(["doc-so", "123"])
+        self.assertIn("123 -> một trăm hai mươi ba", out)
+
+    def test_lenh_doc_so_nhieu_so(self):
+        out = chay(["doc-so", "7", "1.000.001"])
+        self.assertIn("7 -> bảy", out)
+        self.assertIn("một triệu lẻ một", out)
+
+    def test_lenh_doc_so_dau_phay(self):
+        out = chay(["doc-so", "1,000,001"])
+        self.assertIn("một triệu lẻ một", out)
+
+    def test_lenh_doc_so_sai_ngan_cach(self):
+        with self.assertRaises(SystemExit):
+            chay(["doc-so", "1.0"])
+
+    def test_lenh_doc_so_khong_phai_so(self):
+        with self.assertRaises(SystemExit):
+            chay(["doc-so", "abc"])

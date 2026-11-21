@@ -12,6 +12,7 @@ Chỉ dùng thư viện chuẩn của Python (3.9+). Gồm các lệnh:
     luu          sao lưu file, tên kèm dấu thời gian
     don-dep      tìm rác trong thư mục (__pycache__, .DS_Store, *.pyc...), --xoa để dọn thật
     doi-ten      đổi tên hàng loạt theo cặp --cu/--moi, mặc định chỉ xem trước
+    doc-so       đọc số thành chữ: 123 -> "một trăm hai mươi ba"
 
 Ví dụ:
     python vietlen.py dem ghi-chu.txt
@@ -24,6 +25,7 @@ Ví dụ:
     python vietlen.py luu ghi-chu.txt --vao ~/sao-luu
     python vietlen.py don-dep ~/Projects --xoa
     python vietlen.py doi-ten ~/Pictures --cu IMG --moi anh --thuc-su
+    python vietlen.py doc-so 123 1.000.001
 """
 import argparse
 import datetime
@@ -273,6 +275,105 @@ def cmd_doi_ten(args) -> None:
     print(f"đã đổi tên {da_doi} file")
 
 
+CHU = ["không", "một", "hai", "ba", "bốn", "năm", "sáu", "bảy", "tám", "chín"]
+DON_VI_NHOM = ["", " nghìn", " triệu", " tỷ", " nghìn tỷ", " triệu tỷ"]
+GIOI_HAN_DOC_SO = 10**18 - 1  # đọc được tới 999.999.999.999.999.999
+
+
+def _doc_nhom(h: int, t: int, o: int, dan_dau: bool) -> str:
+    """Đọc một nhóm ba chữ số theo cách đọc thông dụng.
+
+    dan_dau=True: nhóm cao nhất của cả số — không thêm "không trăm" vô nghĩa.
+    dan_dau=False: nhóm giữa/cuối — giữ "không trăm" làm mốc vị trí.
+    Biến âm chuẩn: mươi một -> mươi mốt, mươi bốn -> mươi tư, mươi năm -> mươi lăm,
+    còn hàng chục là 1 thì đọc mười (mười một, mười tư, mười lăm).
+    """
+    # phần trăm
+    if h:
+        tram = CHU[h] + " trăm"
+    elif not dan_dau:
+        tram = "không trăm"
+    else:
+        tram = ""
+    # phần chục — đơn vị
+    if t == 0:
+        if o == 0:
+            chuc = ""
+        elif tram:
+            chuc = "lẻ " + CHU[o]
+        else:
+            chuc = CHU[o]  # số có một chữ số
+    elif t == 1:
+        if o == 0:
+            chuc = "mười"
+        else:
+            cuoi = {1: "một", 4: "tư", 5: "lăm"}.get(o, CHU[o])
+            chuc = "mười " + cuoi
+    else:
+        cuoi = {1: "mốt", 4: "tư", 5: "lăm"}.get(o, CHU[o]) if o else ""
+        chuc = CHU[t] + " mươi" + (" " + cuoi if o else "")
+    s = " ".join(x for x in (tram, chuc) if x)
+    # nhóm không dẫn đầu: "không trăm lẻ một" đọc gọn thành "lẻ một" (52.001 -> năm mươi hai nghìn lẻ một)
+    return s.replace("không trăm lẻ", "lẻ")
+
+
+def doc_so_thanh_chu(n: int) -> str:
+    """Đọc số nguyên (kể cả âm) thành chữ tiếng Việt, tối đa 18 chữ số."""
+    if n < 0:
+        return "trừ " + doc_so_thanh_chu(-n)
+    if n >= GIOI_HAN_DOC_SO + 1:
+        raise ValueError("số quá lớn để đọc (tối đa 999.999.999.999.999.999)")
+    if n == 0:
+        return "không"
+    nhom = []
+    while n:
+        nhom.append(n % 1000)
+        n //= 1000
+    cau = []
+    for i in range(len(nhom) - 1, -1, -1):
+        h, du = divmod(nhom[i], 100)
+        t, o = divmod(du, 10)
+        if nhom[i] == 0:
+            continue  # nhóm toàn số 0 được bỏ qua (1.000.001 -> một triệu lẻ một)
+        cau.append(_doc_nhom(h, t, o, dan_dau=(len(cau) == 0)) + DON_VI_NHOM[i])
+    return " ".join(cau)
+
+
+def _phan_tich_so(s: str) -> int:
+    """Đọc số từ chuỗi, chấp nhận dấu chấm/phẩy/khoảng trắng làm ngăn cách nhóm."""
+    s = s.strip()
+    dau, than = "", s
+    if than.startswith("-"):
+        dau, than = "-", than[1:]
+    elif than.startswith("+"):
+        than = than[1:]
+    if not than:
+        raise SystemExit(f"doc-so: '{s}' không phải số hợp lệ (ví dụ: 123 hoặc 1.000.001)")
+    if "." in than or "," in than:
+        # có dấu ngăn cách thì nhóm phải đủ 3 chữ số, tránh đọc sai 1.0 thành 10
+        cac_cot = than.replace(",", ".").split(".")
+        if not cac_cot[0].isdigit() or any(len(k) != 3 or not k.isdigit() for k in cac_cot[1:]):
+            raise SystemExit(
+                f"doc-so: dấu ngăn cách trong '{s}' không đúng (nhóm phải đủ 3 chữ số, ví dụ 1.000.001)"
+            )
+        than = "".join(cac_cot)
+    else:
+        than = than.replace(" ", "")
+    if not than.isdigit():
+        raise SystemExit(f"doc-so: '{s}' không phải số hợp lệ (ví dụ: 123 hoặc 1.000.001)")
+    return int(dau + than)
+
+
+def cmd_doc_so(args) -> None:
+    """Đọc từng số thành chữ tiếng Việt."""
+    for so in args.so:
+        try:
+            chu = doc_so_thanh_chu(_phan_tich_so(so))
+        except ValueError as loi:
+            raise SystemExit(f"doc-so: {loi}")
+        print(f"{so} -> {chu}")
+
+
 def main(argv=None) -> int:
     p = argparse.ArgumentParser(
         prog="vietlen",
@@ -329,6 +430,10 @@ def main(argv=None) -> int:
     n2.add_argument("--moi", default="", help="đoạn tên thay vào (mặc định: xóa hẳn)")
     n2.add_argument("--thuc-su", action="store_true", help="đổi thật (mặc định chỉ xem trước)")
     n2.set_defaults(func=cmd_doi_ten)
+
+    ds = sub.add_parser("doc-so", help="đọc số thành chữ: 123 -> một trăm hai mươi ba")
+    ds.add_argument("so", nargs="+", help="số cần đọc (chấp nhận 1.000.001, 1,000,001, -45)")
+    ds.set_defaults(func=cmd_doc_so)
 
     args = p.parse_args(argv)
     args.func(args)
