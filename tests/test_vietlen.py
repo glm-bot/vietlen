@@ -99,5 +99,64 @@ class TestNgay(unittest.TestCase):
             chay(["ngay", "--den", "31/02/2027"])
 
 
+class TestTimDong(unittest.TestCase):
+    def test_tim_dong(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            f = Path(tmp) / "nhat-ky.txt"
+            f.write_text("hom nay nang dep\nhom mai mua\nhom qua gio\n", encoding="utf-8")
+            out = chay(["tim-dong", "hom", str(f)])
+            self.assertIn("1: hom nay nang dep", out)
+            self.assertIn("2: hom mai mua", out)
+            self.assertIn("3: hom qua gio", out)
+            self.assertIn("tìm thấy 3 dòng", out)
+
+    def test_tim_dong_khong_khop(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            f = Path(tmp) / "a.txt"
+            f.write_text("khong co gi\n", encoding="utf-8")
+            out = chay(["tim-dong", "blabla", str(f)])
+            self.assertIn("tìm thấy 0 dòng", out)
+
+    def test_tim_dong_khong_phan_biet_hoa_thuong(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            f = Path(tmp) / "a.txt"
+            f.write_text("Quan Trong Lam\n", encoding="utf-8")
+            out = chay(["tim-dong", "QUAN", str(f)])
+            self.assertIn("Quan Trong Lam", out)
+
+
+class TestSoSanh(unittest.TestCase):
+    def test_giong_het(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            a = Path(tmp) / "a.txt"
+            b = Path(tmp) / "b.txt"
+            a.write_text("noi dung giong nhau\n", encoding="utf-8")
+            b.write_text("noi dung giong nhau\n", encoding="utf-8")
+            out = chay(["so-sanh", str(a), str(b)])
+            self.assertIn("GIỐNG HỆT", out)
+
+    def test_khac_nhau(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            a = Path(tmp) / "a.txt"
+            b = Path(tmp) / "b.txt"
+            a.write_text("ban goc\n", encoding="utf-8")
+            b.write_text("ban da sua\n", encoding="utf-8")
+            out = chay(["so-sanh", str(a), str(b)])
+            self.assertIn("KHÁC NHAU", out)
+
+
+class TestLuu(unittest.TestCase):
+    def test_luu_tao_ban_sao(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            f = Path(tmp) / "quan-trong.txt"
+            f.write_text("du lieu quy gia\n", encoding="utf-8")
+            out = chay(["luu", str(f), "--vao", str(Path(tmp) / "kho-sao-luu")])
+            ban_sao = list((Path(tmp) / "kho-sao-luu").iterdir())
+            self.assertEqual(len(ban_sao), 1)
+            self.assertEqual(ban_sao[0].read_text(encoding="utf-8"), "du lieu quy gia\n")
+            self.assertIn("đã lưu quan-trong.txt", out)
+            self.assertIn(".txt", ban_sao[0].name)
+
+
 if __name__ == "__main__":
     unittest.main()

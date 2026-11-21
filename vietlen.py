@@ -1,20 +1,28 @@
 #!/usr/bin/env python3
 """vietlen — bộ lệnh dòng lệnh tiếng Việt: đọc tên là hiểu nó làm gì.
 
-Chỉ dùng thư viện chuẩn của Python (3.8+). Gồm các lệnh:
+Chỉ dùng thư viện chuẩn của Python (3.9+). Gồm các lệnh:
     dem          đếm dòng, từ, ký tự của file
     tim          tìm file/thư mục theo tên
     kich-thuoc   xem dung lượng thư mục theo loại file
     ngay         hôm nay là thứ mấy, còn bao nhiêu ngày đến mốc
+    tim-dong     in các dòng chứa từ khóa, kèm số dòng
+    so-sanh      so sánh hai file theo nội dung (SHA-256)
+    luu          sao lưu file, tên kèm dấu thời gian
 
 Ví dụ:
     python vietlen.py dem ghi-chu.txt
     python vietlen.py tim bao-cao --trong ~/Documents
     python vietlen.py kich-thuoc ~/Downloads
     python vietlen.py ngay --den 2027-02-06
+    python vietlen.py tim-dong quan-trong ghi-chu.txt
+    python vietlen.py so-sanh ban-goc.txt ban-sua.txt
+    python vietlen.py luu ghi-chu.txt --vao ~/sao-luu
 """
 import argparse
 import datetime
+import hashlib
+import shutil
 import sys
 from pathlib import Path
 
@@ -112,6 +120,54 @@ def cmd_ngay(args) -> None:
         print(f"Ngày {moc.strftime('%d/%m/%Y')} đã qua {abs(con_lai)} ngày")
 
 
+def cmd_tim_dong(args) -> None:
+    """In các dòng trong file chứa từ khóa, kèm số thứ tự dòng."""
+    p = Path(args.file).expanduser()
+    if not p.is_file():
+        raise SystemExit(f"tim-dong: không tìm thấy file '{args.file}'")
+    tu_khoa = args.tu_khoa.lower()
+    hits = 0
+    for i, dong in enumerate(p.read_text(encoding="utf-8", errors="replace").splitlines(), start=1):
+        if tu_khoa in dong.lower():
+            print(f"{i}: {dong}")
+            hits += 1
+    print(f"\ntìm thấy {hits} dòng chứa '{args.tu_khoa}' trong {p.name}")
+
+
+def cmd_so_sanh(args) -> None:
+    """So sánh hai file: giống hệt hay khác nhau (theo SHA-256)."""
+    p1, p2 = Path(args.file1).expanduser(), Path(args.file2).expanduser()
+    for p in (p1, p2):
+        if not p.is_file():
+            raise SystemExit(f"so-sanh: không tìm thấy file '{p}'")
+    h1 = hashlib.sha256(p1.read_bytes()).hexdigest()
+    h2 = hashlib.sha256(p2.read_bytes()).hexdigest()
+    if h1 == h2:
+        print(f"GIỐNG HỆT: {p1.name} và {p2.name} cùng nội dung ({doc_dung_luong(p1.stat().st_size)})")
+    else:
+        print("KHÁC NHAU:")
+        print(f"  {p1.name}: {doc_dung_luong(p1.stat().st_size)} — sha256 {h1[:12]}...")
+        print(f"  {p2.name}: {doc_dung_luong(p2.stat().st_size)} — sha256 {h2[:12]}...")
+
+
+def cmd_luu(args) -> None:
+    """Sao lưu file vào thư mục đích, tên file kèm dấu thời gian."""
+    muc_dich = Path(args.vao).expanduser().resolve() if args.vao else Path.cwd() / "ban-sao-luu"
+    muc_dich.mkdir(parents=True, exist_ok=True)
+    thoi_gian = datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
+    da_luu = 0
+    for ten in args.file:
+        p = Path(ten).expanduser()
+        if not p.is_file():
+            print(f"luu: không tìm thấy file '{ten}'", file=sys.stderr)
+            continue
+        moi = muc_dich / f"{p.stem}_{thoi_gian}{p.suffix}"
+        shutil.copy2(p, moi)
+        print(f"đã lưu {p.name} -> {moi}")
+        da_luu += 1
+    print(f"\n({da_luu} file đã được sao lưu lúc {thoi_gian})")
+
+
 def main(argv=None) -> int:
     p = argparse.ArgumentParser(
         prog="vietlen",
@@ -136,6 +192,21 @@ def main(argv=None) -> int:
     n = sub.add_parser("ngay", help="hôm nay thứ mấy, còn bao nhiêu ngày đến mốc")
     n.add_argument("--den", help="ngày cần đếm ngược tới (dạng 2027-02-06)")
     n.set_defaults(func=cmd_ngay)
+
+    t2 = sub.add_parser("tim-dong", help="in các dòng chứa từ khóa, kèm số dòng")
+    t2.add_argument("tu_khoa", help="từ khóa cần tìm (không phân biệt hoa thường)")
+    t2.add_argument("file", help="file cần tìm trong đó")
+    t2.set_defaults(func=cmd_tim_dong)
+
+    s = sub.add_parser("so-sanh", help="so sánh hai file theo nội dung (SHA-256)")
+    s.add_argument("file1")
+    s.add_argument("file2")
+    s.set_defaults(func=cmd_so_sanh)
+
+    l = sub.add_parser("luu", help="sao lưu file, tên kèm dấu thời gian")
+    l.add_argument("file", nargs="+", help="file cần sao lưu")
+    l.add_argument("--vao", help="thư mục đích (mặc định: ban-sao-luu/)")
+    l.set_defaults(func=cmd_luu)
 
     args = p.parse_args(argv)
     args.func(args)
