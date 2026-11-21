@@ -1,0 +1,30 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Chạy bộ test
+        run: python -m unittest discover -s tests -v
+
+      - name: Smoke test từng lệnh
+        run: |
+          python vietlen.py ngay
+          echo "mo ta thu nghiem" > /tmp/ghi-chu.txt
+          python vietlen.py dem /tmp/ghi-chu.txt
+          mkdir -p /tmp/kho
+          touch /tmp/kho/hinh.jpg
+          echo "abc" > /tmp/kho/van-ban.txt
+          python vietlen.py tim hinh --trong /tmp/kho
+          python vietlen.py kich-thuoc /tmp/kho
