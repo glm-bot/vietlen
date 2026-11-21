@@ -37,3 +37,10 @@ jobs:
           echo "abc" > /tmp/kho/van-ban.txt
           python vietlen.py tim hinh --trong /tmp/kho
           python vietlen.py kich-thuoc /tmp/kho
+
+      - name: Kiểm tra cài đặt pip (pyproject.toml)
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install .
+          vietlen ngay
+          vietlen dem README.md

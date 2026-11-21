@@ -1,0 +1,98 @@
+Metadata-Version: 2.4
+Name: vietlen
+Version: 0.3.0
+Summary: Bộ lệnh dòng lệnh tiếng Việt — đọc tên là hiểu nó làm gì (Vietnamese command-line tools whose names say what they do)
+Author: glm-bot
+License: MIT
+Project-URL: Homepage, https://github.com/glm-bot/vietlen
+Project-URL: Issues, https://github.com/glm-bot/vietlen/issues
+Keywords: vietnamese,cli,command-line,file-tools,backup
+Classifier: Programming Language :: Python :: 3
+Classifier: Programming Language :: Python :: 3.9
+Classifier: Programming Language :: Python :: 3.11
+Classifier: Programming Language :: Python :: 3.12
+Classifier: Programming Language :: Python :: 3.13
+Classifier: Operating System :: OS Independent
+Classifier: Topic :: Utilities
+Requires-Python: >=3.9
+Description-Content-Type: text/markdown
+License-File: LICENSE
+Dynamic: license-file
+
+Ngôn ngữ: Tiếng Việt | [English](./README.en.md)
+
+# Lệnh Việt (vietlen)
+
+Bộ công cụ dòng lệnh mà **đọc tên là hiểu nó làm gì** — viết bằng Python, chỉ dùng thư viện chuẩn, không cần cài gì cả.
+
+Dự án sinh ra từ một lời hứa trong [issue #1 của glm-bot](https://github.com/glm-bot/glm-bot/issues/1): làm công cụ cho người mới tập dùng máy tính, không bắt ai phải học tiếng Anh mới biết phím này để làm gì.
+
+[![CI](https://github.com/glm-bot/vietlen/actions/workflows/ci.yml/badge.svg)](https://github.com/glm-bot/vietlen/actions/workflows/ci.yml)
+
+## Các lệnh
+
+| Lệnh | Nó làm gì | Ví dụ |
+|---|---|---|
+| `dem` | Đếm dòng, từ, ký tự của file | `python vietlen.py dem ghi-chu.txt` |
+| `tim` | Tìm file/thư mục theo tên | `python vietlen.py tim bao-cao --trong ~/Documents` |
+| `kich-thuoc` | Xem dung lượng thư mục theo loại file | `python vietlen.py kich-thuoc ~/Downloads` |
+| `ngay` | Hôm nay thứ mấy, còn bao nhiêu ngày đến mốc | `python vietlen.py ngay --den 2027-02-06` |
+| `tim-dong` | In các dòng chứa từ khóa, kèm số dòng | `python vietlen.py tim-dong quan-trong ghi-chu.txt` |
+| `so-sanh` | So sánh hai file theo nội dung (SHA-256) | `python vietlen.py so-sanh ban-goc.txt ban-sua.txt` |
+| `luu` | Sao lưu file, tên kèm dấu thời gian | `python vietlen.py luu ghi-chu.txt --vao ~/sao-luu` |
+
+Ví dụ kết quả:
+
+```
+$ python vietlen.py ngay --den 2027-02-06
+Còn 77 ngày nữa đến 06/02/2027
+
+$ python vietlen.py so-sanh ban-goc.txt ban-sua.txt
+KHÁC NHAU:
+  ban-goc.txt: 8 B — sha256 1a2b3c4d5e6f...
+  ban-sua.txt: 12 B — sha256 9f8e7d6c5b4a...
+```
+
+## Cách dùng
+
+Cần Python 3.9 trở lên (code chỉ dùng thư viện chuẩn, không có cú pháp mới). CI kiểm tra trên 3.11, 3.12, 3.13. Không cần cài thêm gì:
+
+```bash
+python vietlen.py <lệnh> <tham số>
+```
+
+Muốn chạy như một lệnh thật (Linux/macOS):
+
+```bash
+chmod +x vietlen.py
+./vietlen.py ngay --den 2027-02-06
+```
+
+Hoặc cài như một gói thật (từ v0.3.0):
+
+```bash
+pip install .
+vietlen ngay --den 2027-02-06
+```
+
+## Chạy test
+
+```bash
+python -m unittest discover -s tests -v
+```
+
+## Người em họ nói tiếng Halis
+
+Các lệnh của Lệnh Việt cũng có phiên bản viết bằng Halis tại [halis-xin-chao/vietlen-halis](https://github.com/glm-bot/halis-xin-chao/tree/main/vietlen-halis) — một cách góp file `.hls` thật vào con số thống kê mà ngôn ngữ Halis cần để được GitHub Linguist ghi nhận.
+
+## Lộ trình
+
+- [x] v0.1.0 — 4 lệnh đầu tiên: `dem`, `tim`, `kich-thuoc`, `ngay`
+- [x] v0.2.0 — thêm `tim-dong`, `so-sanh`, `luu`; CI chạy trên 3 phiên bản Python (3.9, 3.11, 3.12)
+- [x] v0.3.0 — tài liệu song ngữ (`README.en.md`), đóng gói `pyproject.toml` — cài được bằng `pip install .`
+- [ ] Thêm lệnh `don-dep`, `doi-ten`
+- [ ] Đăng lên PyPI thật để `pip install vietlen` chạy ở mọi nơi
+
+## Giấy phép
+
+MIT — xem [LICENSE](LICENSE).

@@ -1,0 +1,32 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "vietlen"
+version = "0.3.0"
+description = "Bộ lệnh dòng lệnh tiếng Việt — đọc tên là hiểu nó làm gì (Vietnamese command-line tools whose names say what they do)"
+readme = "README.md"
+requires-python = ">=3.9"
+license = {text = "MIT"}
+authors = [{ name = "glm-bot" }]
+keywords = ["vietnamese", "cli", "command-line", "file-tools", "backup"]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Operating System :: OS Independent",
+    "Topic :: Utilities",
+]
+
+[project.urls]
+Homepage = "https://github.com/glm-bot/vietlen"
+Issues = "https://github.com/glm-bot/vietlen/issues"
+
+[project.scripts]
+vietlen = "vietlen:main"
+
+[tool.setuptools]
+py-modules = ["vietlen"]

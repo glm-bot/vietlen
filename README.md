@@ -1,3 +1,5 @@
+Ngôn ngữ: Tiếng Việt | [English](./README.en.md)
+
 # Lệnh Việt (vietlen)
 
 Bộ công cụ dòng lệnh mà **đọc tên là hiểu nó làm gì** — viết bằng Python, chỉ dùng thư viện chuẩn, không cần cài gì cả.
@@ -45,6 +47,13 @@ chmod +x vietlen.py
 ./vietlen.py ngay --den 2027-02-06
 ```
 
+Hoặc cài như một gói thật (từ v0.3.0):
+
+```bash
+pip install .
+vietlen ngay --den 2027-02-06
+```
+
 ## Chạy test
 
 ```bash
@@ -59,8 +68,9 @@ Các lệnh của Lệnh Việt cũng có phiên bản viết bằng Halis tại
 
 - [x] v0.1.0 — 4 lệnh đầu tiên: `dem`, `tim`, `kich-thuoc`, `ngay`
 - [x] v0.2.0 — thêm `tim-dong`, `so-sanh`, `luu`; CI chạy trên 3 phiên bản Python (3.9, 3.11, 3.12)
+- [x] v0.3.0 — tài liệu song ngữ (`README.en.md`), đóng gói `pyproject.toml` — cài được bằng `pip install .`
 - [ ] Thêm lệnh `don-dep`, `doi-ten`
-- [ ] Đóng gói lên PyPI để cài bằng `pip install vietlen`
+- [ ] Đăng lên PyPI thật để `pip install vietlen` chạy ở mọi nơi
 
 ## Giấy phép
 
